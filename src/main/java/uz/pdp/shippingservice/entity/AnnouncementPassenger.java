@@ -62,6 +62,7 @@ public class AnnouncementPassenger {
                 .toLongitude(announcementRequestDto.getToLongitude())
                 .timeToSend(announcementRequestDto.getTimeToSend())
                 .info(announcementRequestDto.getInfo())
+                .timeToSend(announcementRequestDto.getTimeToSend())
                 .createdTime(LocalDateTime.now())
                 .price(announcementRequestDto.getPrice())
                 .active(true)

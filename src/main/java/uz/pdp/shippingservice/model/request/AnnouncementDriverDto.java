@@ -19,4 +19,7 @@ public class AnnouncementDriverDto {
 
      private String info;
 
+     private boolean goAnotherRegion;
+
+
 }

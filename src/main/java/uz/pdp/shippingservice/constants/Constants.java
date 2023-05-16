@@ -60,5 +60,6 @@ public class Constants {
     public static final String INPUT_EXCEPTION="INPUT EXCEPTION";
     public static final String ADVERTISING_NOT_FOUND="ADVERTISING NOT FOUND";
     public static final String PARCEL_NOT_FOUND="PARCEL NOT FOUND";
+    public static final String YOU_CAN_ONLY_SET_5_ANNOUNCEMENT="Siz faqat 5 tagacha active e'lon qo'yishingiz mumkun.";
 
 }

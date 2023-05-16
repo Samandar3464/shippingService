@@ -31,6 +31,8 @@ public class AnnouncementDriver {
 
      private boolean deleted;
 
+     private boolean goAnotherRegion;
+
      private LocalDateTime createdTime;
 
      @ManyToOne
@@ -43,12 +45,16 @@ public class AnnouncementDriver {
      @OnDelete(action = OnDeleteAction.CASCADE)
      private User user;
 
+     @ManyToOne
+     private Car car;
+
      public static AnnouncementDriver from(AnnouncementDriverDto announcementRequestDto) {
           return AnnouncementDriver.builder()
                   .currentLatitude(announcementRequestDto.getCurrentLatitude())
                   .currentLongitude(announcementRequestDto.getCurrentLongitude())
                   .info(announcementRequestDto.getInfo())
                   .createdTime(LocalDateTime.now())
+                  .goAnotherRegion(announcementRequestDto.isGoAnotherRegion())
                   .active(true)
                   .deleted(false)
                   .build();
