@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import uz.pdp.shippingservice.config.jwtConfig.JwtGenerate;
-import uz.pdp.shippingservice.entity.*;
+import uz.pdp.shippingservice.entity.Attachment;
+import uz.pdp.shippingservice.entity.CountMassage;
+import uz.pdp.shippingservice.entity.Status;
+import uz.pdp.shippingservice.entity.User;
 import uz.pdp.shippingservice.entity.api.ApiResponse;
 import uz.pdp.shippingservice.exception.UserAlreadyExistException;
 import uz.pdp.shippingservice.exception.UserNotFoundException;
@@ -35,7 +38,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.random.RandomGenerator;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -178,6 +181,40 @@ public class UserService {
         all.forEach(obj -> userResponseDtoList.add(fromUserToResponse(obj)));
         return new ApiResponse(new UserResponseListForAdmin(userResponseDtoList, all.getTotalElements(), all.getTotalPages(), all.getNumber()), true);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse checkUserResponseExistById() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw new UserNotFoundException(USER_NOT_FOUND);
+        }
+        User user = (User) authentication.getPrincipal();
+        User user1 = userRepository.findByPhone(user.getPhone()).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        return new ApiResponse(fromUserToResponse(user1), true);
+    }
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse reSendSms(String number) {
+        Integer integer = verificationCodeGenerator();
+        System.out.println(integer);
+        service.sendSms(SmsModel.builder()
+                .mobile_phone(number)
+                .message("DexTaxi. Tasdiqlash kodi: " + integer + ". Yo'linggiz bexatar  bo'lsin.")
+                .from(4546)
+                .callback_url("http://0000.uz/test.php")
+                .build());
+        countMassageRepository.save(new CountMassage(number, 1, LocalDateTime.now()));
+        return new ApiResponse(SUCCESSFULLY, true);
+    }
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse removeUserFromContext() {
+        User user = checkUserExistByContext();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null && authentication.getName().equals(user.getPhone())) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
+        return new ApiResponse(SUCCESSFULLY, true);
+    }
+
     public User checkUserExistByContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof AnonymousAuthenticationToken) {
@@ -224,6 +261,22 @@ public class UserService {
             countMassage.setCount(countMassage.getCount() + 1);
             countMassageRepository.save(countMassage);
         }
+    }
+
+    public ApiResponse updateUser(UserUpdateDto userUpdateDto) {
+        User user = checkUserExistByContext();
+        user.setFullName(userUpdateDto.getFullName());
+        user.setGender(userUpdateDto.getGender());
+        if (userUpdateDto.getProfilePhoto() != null) {
+            Attachment attachment = attachmentService.saveToSystem(userUpdateDto.getProfilePhoto());
+            if (user.getProfilePhoto() != null) {
+                attachmentService.deleteNewNameId(user.getProfilePhoto().getNewName() + "." + user.getProfilePhoto().getType());
+            }
+            user.setProfilePhoto(attachment);
+        }
+        user.setBirthDate(userUpdateDto.getBrithDay());
+        userRepository.save(user);
+        return new ApiResponse(SUCCESSFULLY, true);
     }
 }
 

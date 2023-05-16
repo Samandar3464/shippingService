@@ -1,4 +1,4 @@
-package uz.pdp.shippingservice.entity.enums;
+package uz.pdp.shippingservice.enums;
 
 public enum NotificationType {
 

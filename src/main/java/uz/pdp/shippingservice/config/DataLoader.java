@@ -6,14 +6,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import uz.pdp.shippingservice.entity.*;
-import uz.pdp.shippingservice.entity.enums.Gender;
+import uz.pdp.shippingservice.enums.Gender;
 import uz.pdp.shippingservice.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Component
 @RequiredArgsConstructor

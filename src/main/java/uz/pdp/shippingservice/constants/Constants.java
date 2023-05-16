@@ -1,4 +1,4 @@
-package uz.pdp.shippingservice.entity.constants;
+package uz.pdp.shippingservice.constants;
 public class Constants {
 
     public static final String USER_NOT_FOUND="USER NOT FOUND";

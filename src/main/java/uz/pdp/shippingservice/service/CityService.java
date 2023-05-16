@@ -12,7 +12,7 @@ import uz.pdp.shippingservice.model.request.CityRequestDto;
 import uz.pdp.shippingservice.repository.CityRepository;
 import uz.pdp.shippingservice.repository.RegionRepository;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor

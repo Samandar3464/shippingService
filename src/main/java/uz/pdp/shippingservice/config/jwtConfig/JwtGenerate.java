@@ -13,7 +13,7 @@ import uz.pdp.shippingservice.repository.UserRepository;
 
 import java.util.Date;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor

@@ -3,8 +3,8 @@ package uz.pdp.shippingservice.model.response;
 import lombok.*;
 import java.util.HashMap;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.CAR_HAS_ENOUGH_SEAT_BUT_NOT_SUIT_YOUR_CHOOSE;
-import static uz.pdp.shippingservice.entity.constants.Constants.YOU_COME_TO_MESSAGE_FROM_DRIVER;
+import static uz.pdp.shippingservice.constants.Constants.CAR_HAS_ENOUGH_SEAT_BUT_NOT_SUIT_YOUR_CHOOSE;
+import static uz.pdp.shippingservice.constants.Constants.YOU_COME_TO_MESSAGE_FROM_DRIVER;
 
 @Getter
 @Setter

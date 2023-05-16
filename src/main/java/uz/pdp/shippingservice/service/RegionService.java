@@ -11,7 +11,7 @@ import uz.pdp.shippingservice.exception.RecordNotFoundException;
 import uz.pdp.shippingservice.model.request.RegionRegisterRequestDto;
 import uz.pdp.shippingservice.repository.RegionRepository;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor

@@ -16,7 +16,7 @@ import java.security.SignatureException;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 
 @RestControllerAdvice
@@ -108,6 +108,14 @@ public class CommonExceptionHandler {
     public ApiResponse fireBaseException(FirebaseMessagingException e) {
         return new ApiResponse(
                 FIREBASE_EXCEPTION
+                , false
+                , null);
+    }
+    @ExceptionHandler(FileUploadException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse fireBaseException(FileUploadException e) {
+        return new ApiResponse(
+                e.getMessage()
                 , false
                 , null);
     }

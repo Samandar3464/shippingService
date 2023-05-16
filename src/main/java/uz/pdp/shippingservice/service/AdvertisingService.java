@@ -1,7 +1,6 @@
 package uz.pdp.shippingservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,7 +13,7 @@ import uz.pdp.shippingservice.repository.AdvertisingRepository;
 
 import java.util.UUID;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +24,7 @@ public class AdvertisingService {
     private final AttachmentService attachmentService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse add(AdvertisingRequestDto advertisingRequestDto) throws FileUploadException {
+    public ApiResponse add(AdvertisingRequestDto advertisingRequestDto) {
         Attachment attachment = attachmentService.saveToSystem(advertisingRequestDto.getContent());
         Advertising advertising = Advertising.from(advertisingRequestDto);
         advertising.setContent(attachment);

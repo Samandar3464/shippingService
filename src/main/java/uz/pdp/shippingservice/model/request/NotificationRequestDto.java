@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uz.pdp.shippingservice.entity.enums.NotificationType;
+import uz.pdp.shippingservice.enums.NotificationType;
 
 import java.util.HashMap;
 import java.util.List;

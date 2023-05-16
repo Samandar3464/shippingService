@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.CAN_NOT_SEND_SMS;
-import static uz.pdp.shippingservice.entity.constants.Constants.CAN_NOT_TAKE_SMS_SENDING_SERVICE_TOKEN;
+import static uz.pdp.shippingservice.constants.Constants.CAN_NOT_SEND_SMS;
+import static uz.pdp.shippingservice.constants.Constants.CAN_NOT_TAKE_SMS_SENDING_SERVICE_TOKEN;
 
 @Service
 @RequiredArgsConstructor

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import uz.pdp.shippingservice.exception.FirebaseConnectionException;
 import uz.pdp.shippingservice.model.response.NotificationMessageResponse;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.FIREBASE_EXCEPTION;
-import static uz.pdp.shippingservice.entity.constants.Constants.SUCCESSFULLY;
+import static uz.pdp.shippingservice.constants.Constants.FIREBASE_EXCEPTION;
+import static uz.pdp.shippingservice.constants.Constants.SUCCESSFULLY;
 
 
 @Service

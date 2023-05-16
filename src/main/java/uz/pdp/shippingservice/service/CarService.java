@@ -1,7 +1,6 @@
 package uz.pdp.shippingservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 
 @Service
@@ -41,7 +40,7 @@ public class CarService {
     private final UserRepository userRepository;
 
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse addCar(CarRegisterRequestDto carRegisterRequestDto) throws FileUploadException {
+    public ApiResponse addCar(CarRegisterRequestDto carRegisterRequestDto){
         User user = userService.checkUserExistByContext();
         List<Role> roles = user.getRoles();
         Role byName = roleRepository.findByName(DRIVER);
@@ -54,7 +53,12 @@ public class CarService {
         return new ApiResponse(SUCCESSFULLY, true);
     }
 
-
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse getCar() {
+        User user = userService.checkUserExistByContext();
+        Car car = getCarByUserId(user.getId());
+        return new ApiResponse(fromCarToResponse(car), true);
+    }
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getCarById(UUID carId) {
         Car car = carRepository.findById(carId).orElseThrow(() -> new CarNotFound(CAR_NOT_FOUND));
@@ -62,13 +66,13 @@ public class CarService {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse getCar() {
-        User user = userService.checkUserExistByContext();
-        Car car = getCarByUserId(user.getId());
-        return new ApiResponse(fromCarToResponse(car), true);
+    public ApiResponse deleteCarByID(UUID id) {
+        Car byId = carRepository.findById(id).orElseThrow(() -> new CarNotFound(CAR_NOT_FOUND));
+        byId.setActive(false);
+        carRepository.save(byId);
+        return new ApiResponse(DELETED, true);
     }
-
-    private Car from(CarRegisterRequestDto carRegisterRequestDto, User user) throws FileUploadException {
+    private Car from(CarRegisterRequestDto carRegisterRequestDto, User user){
         Optional<Car> byUserIdAndActiveTrue = carRepository.findByUserIdAndActiveTrue(user.getId());
         if (byUserIdAndActiveTrue.isPresent()) {
             throw new CarAlreadyExistException(CAR_ALREADY_EXIST);
@@ -97,15 +101,6 @@ public class CarService {
         carResponseDto.setAutoPhotosPath(carPhotoList);
         return carResponseDto;
     }
-
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse deleteCarByID(UUID id) {
-        Car byId = carRepository.findById(id).orElseThrow(() -> new CarNotFound(CAR_NOT_FOUND));
-        byId.setActive(false);
-        carRepository.save(byId);
-        return new ApiResponse(DELETED, true);
-    }
-
     public Car getCarByUserId(UUID user_id) {
         return carRepository.findByUserIdAndActiveTrue(user_id).orElseThrow(() ->
                 new CarNotFound(CAR_NOT_FOUND));

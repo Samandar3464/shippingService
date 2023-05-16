@@ -1,12 +1,12 @@
 package uz.pdp.shippingservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uz.pdp.shippingservice.entity.Attachment;
 import uz.pdp.shippingservice.entity.api.ApiResponse;
+import uz.pdp.shippingservice.exception.FileUploadException;
 import uz.pdp.shippingservice.exception.OriginalFileNameNullException;
 import uz.pdp.shippingservice.exception.RecordNotFoundException;
 import uz.pdp.shippingservice.repository.AttachmentRepository;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.constants.Constants.*;
 
 
 @Service
@@ -49,7 +49,7 @@ public class AttachmentService {
     }
 
     //    Bitta fileni sestamaga saqlab beradi
-    public Attachment saveToSystem(MultipartFile file) throws FileUploadException {
+    public Attachment saveToSystem(MultipartFile file) {
         try {
             String pathFolder = getYearMonthDay();
             File folder = new File(attachUploadFolder + pathFolder);
@@ -80,11 +80,7 @@ public class AttachmentService {
     public List<Attachment> saveToSystemListFile(List<MultipartFile> fileList) {
         List<Attachment> attachments = new ArrayList<>();
         fileList.forEach((file) -> {
-            try {
                 attachments.add(saveToSystem(file));
-            } catch (FileUploadException e) {
-                throw new RuntimeException(e);
-            }
         });
         return attachments;
     }
@@ -127,9 +123,8 @@ public class AttachmentService {
             Files.delete(file);
             attachmentRepository.deleteById(entity.getId());
             return new ApiResponse(DELETED, true);
-        } catch (
-                IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RecordNotFoundException(FILE_NOT_FOUND);
         }
     }
 }

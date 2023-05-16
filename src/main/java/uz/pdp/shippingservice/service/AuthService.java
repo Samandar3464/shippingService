@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import uz.pdp.shippingservice.exception.UserNotFoundException;
 import uz.pdp.shippingservice.repository.UserRepository;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.USER_NOT_FOUND;
+import static uz.pdp.shippingservice.constants.Constants.USER_NOT_FOUND;
 
 
 @Service

@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.pdp.shippingservice.entity.User;
-import uz.pdp.shippingservice.entity.enums.Gender;
+import uz.pdp.shippingservice.enums.Gender;
 
 import java.time.LocalDate;
 import java.util.UUID;

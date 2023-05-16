@@ -8,7 +8,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import uz.pdp.shippingservice.entity.enums.Gender;
+import uz.pdp.shippingservice.enums.Gender;
 import uz.pdp.shippingservice.model.request.UserRegisterDto;
 
 import java.time.LocalDate;
