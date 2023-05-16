@@ -1,11 +1,10 @@
 package uz.pdp.shippingservice.model.response;
 
 import lombok.*;
-import uz.pdp.shippingservice.model.request.NotificationRequestDto;
-
 import java.util.HashMap;
 
-import static uz.pdp.shippingservice.entity.constants.Constants.*;
+import static uz.pdp.shippingservice.entity.constants.Constants.CAR_HAS_ENOUGH_SEAT_BUT_NOT_SUIT_YOUR_CHOOSE;
+import static uz.pdp.shippingservice.entity.constants.Constants.YOU_COME_TO_MESSAGE_FROM_DRIVER;
 
 @Getter
 @Setter
@@ -21,7 +20,6 @@ public class NotificationMessageResponse {
     private HashMap<String, String> data;
 
     public static NotificationMessageResponse reCreate(String token,HashMap<String,String> data) {
-
         return NotificationMessageResponse.builder()
                 .receiverToken(token)
                 .title(YOU_COME_TO_MESSAGE_FROM_DRIVER)
@@ -30,37 +28,12 @@ public class NotificationMessageResponse {
                 .build();
 
     }
-
-    public static NotificationMessageResponse fromForPassenger(NotificationRequestDto notificationRequestDto, String token) {
-        return NotificationMessageResponse.builder()
-                .receiverToken(token)
-                .title(notificationRequestDto.getTitle())
-                .data(notificationRequestDto.getDate())
-                .build();
-    }
-
-    public static NotificationMessageResponse fromForDriver(NotificationRequestDto notificationRequestDto, String token) {
-        return NotificationMessageResponse.builder()
-                .receiverToken(token)
-                .title(notificationRequestDto.getTitle())
-                .data(notificationRequestDto.getDate())
-                .build();
-    }
-
-    public static NotificationMessageResponse afterAgreeRequestForPassenger(String token) {
+    public static NotificationMessageResponse from(String token, String massage, HashMap<String ,String> data) {
 
         return NotificationMessageResponse.builder()
                 .receiverToken(token)
-                .title(DRIVER_AGREE)
-                .data(new HashMap<>())
-                .build();
-    }
-    public static NotificationMessageResponse afterAgreeRequestForDriver(String token) {
-
-        return NotificationMessageResponse.builder()
-                .receiverToken(token)
-                .title(PASSENGER_AGREE)
-                .data(new HashMap<>())
+                .title(massage)
+                .data(data)
                 .build();
     }
 }

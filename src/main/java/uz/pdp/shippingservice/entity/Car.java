@@ -3,6 +3,8 @@ package uz.pdp.shippingservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.shippingservice.model.request.CarRegisterRequestDto;
 
 import java.util.List;
@@ -24,19 +26,28 @@ public class Car {
 
     private String color;
 
-    private String texPassport;
+    private String model;
 
-    @OneToMany
-    private List<Attachment> autoPhotos;
+    private float maximumLoad;
 
-    @OneToOne
+    private float maximumLength;
+
+    private float maximumLoadWidth;
+
+    private String texPassportNumber;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Attachment> carPhotos;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private Attachment texPassportPhoto;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Attachment photoDriverLicense;
 
     @JsonIgnore
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     private boolean active;
@@ -44,7 +55,11 @@ public class Car {
     public static Car from(CarRegisterRequestDto carRegisterRequestDto) {
         return Car.builder()
                 .color(carRegisterRequestDto.getColor())
-                .texPassport(carRegisterRequestDto.getTexPassport())
+                .model(carRegisterRequestDto.getModel())
+                .maximumLoad(carRegisterRequestDto.getMaximumLoad())
+                .maximumLength(carRegisterRequestDto.getMaximumLength())
+                .maximumLoadWidth(carRegisterRequestDto.getMaximumLoadWidth())
+                .texPassportNumber(carRegisterRequestDto.getTexPassportNumber())
                 .carNumber(carRegisterRequestDto.getCarNumber())
                 .active(true)
                 .build();

@@ -3,6 +3,8 @@ package uz.pdp.shippingservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.shippingservice.model.request.CityRequestDto;
 
 @Getter
@@ -20,6 +22,7 @@ public class City {
 
     @JsonIgnore
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Region region;
 
     public static City from(CityRequestDto cityRequestDto, Region region) {

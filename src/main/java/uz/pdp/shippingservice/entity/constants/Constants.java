@@ -4,12 +4,13 @@ public class Constants {
     public static final String USER_NOT_FOUND="USER NOT FOUND";
     public static final String USER_ALREADY_EXIST="USER ALREADY EXIST";
     public static final String TOKEN_TIME_OUT="TOKEN TIME OUT";
-
+    public static final String BLOCKED="Sizni DexTaxi accountinggiz blocklandi .";
+    public static final String OPEN="Sizni DexTaxi accountinggiz blockdan ochildi.";
     public static final String SUCCESSFULLY="SUCCESSFULLY";
     public static final String DRIVER_ANNOUNCEMENT_NOT_FOUND="DRIVER ANNOUNCEMENT NOT FOUND";
-    public static final String PASSENGER_ANNOUNCEMENT_NOT_FOUND="PASSENGER ANNOUNCEMENT NOT FOUND";
-    public static final String PASSENGER_PARCEL_NOT_FOUND="PASSENGER PARCEL NOT FOUND";
-    public static final String ANNOUNCEMENT_PASSENGER_ALREADY_EXIST="ANNOUNCEMENT PASSENGER ALREADY EXIST";
+    public static final String PASSENGER_ANNOUNCEMENT_NOT_FOUND="CARGO_OWNER ANNOUNCEMENT NOT FOUND";
+    public static final String PASSENGER_PARCEL_NOT_FOUND="CARGO_OWNER PARCEL NOT FOUND";
+    public static final String ANNOUNCEMENT_PASSENGER_ALREADY_EXIST="ANNOUNCEMENT CARGO_OWNER ALREADY EXIST";
     public static final String ANNOUNCEMENT_DRIVER_ALREADY_EXIST="ANNOUNCEMENT DRIVER ALREADY EXIST";
     public static final String DELETED="DELETED";
     public static final String FILE_NAME_NULL="FILE NAME NULL";
@@ -46,9 +47,9 @@ public class Constants {
     public static final String AUTHORITIES="authorities";
     public static final String AUTHORIZATION="Authorization";
     public static final String DRIVER="HAYDOVCHI";
-
     public static final String ADMIN="ADMIN";
-    public static final String PASSENGER="YOLOVCHI";
+    public static final String CARGO_OWNER ="YUK_EGASI";
+    public static final String CAR_ALREADY_EXIST ="CAR ALREADY EXIST";
     public static final String CODE_TIME_OUT="CODE TIME OUT";
     public static final String FAMILIAR_NOT_FOUND="FAMILIAR_NOT_FOUND";
     public static final String SOMETHING_WRONG="SOMETHING_WRONG";

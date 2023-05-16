@@ -1,5 +1,9 @@
 package uz.pdp.shippingservice.model.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +27,9 @@ public class UserResponseDto {
 
     private String phone;
 
-    private int age;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDate birthDate;
 
     private double status;
 
@@ -38,7 +44,7 @@ public class UserResponseDto {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .phone(user.getPhone())
-                .age(LocalDate.now().getYear() - user.getBirthDate().getYear())
+                .birthDate(user.getBirthDate()==null ? null : user.getBirthDate())
                 .gender(user.getGender())
                 .status(status)
                 .build();

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uz.pdp.shippingservice.entity.Token;
+import uz.pdp.shippingservice.entity.FireBaseToken;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class SmsToken {
     private String message;
 
     @JsonProperty("data")
-    private Token data;
+    private FireBaseToken data;
 
     private String token_type;
 }

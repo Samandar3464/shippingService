@@ -35,7 +35,7 @@ public class DataLoader implements CommandLineRunner {
         if (initMode.equals("always")) {
             Role admim = new Role(1, ADMIN);
             Role save15 = roleRepository.save(admim);
-            Role yolovchi = new Role(2, PASSENGER);
+            Role yolovchi = new Role(2, CARGO_OWNER);
             Role save16 = roleRepository.save(yolovchi);
             Role haydovchi = new Role(3, DRIVER);
             Role save17 = roleRepository.save(haydovchi);
@@ -51,8 +51,9 @@ public class DataLoader implements CommandLineRunner {
                     .isBlocked(true)
                     .build();
             User save = userRepository.save(admin);
-            statusRepository.save(Status.builder().user(save).stars(5L).count(1L).build());
+            Status status = statusRepository.save(Status.builder().stars(5L).count(1L).build());
             save.setRoles(List.of(save15, save16, save17));
+            save.setStatus(status);
             userRepository.save(save);
 
             List<Region> regions = List.of(

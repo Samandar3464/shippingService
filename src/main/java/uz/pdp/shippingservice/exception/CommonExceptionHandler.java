@@ -70,7 +70,7 @@ public class CommonExceptionHandler {
     @ResponseStatus(HttpStatus.ALREADY_REPORTED)
     public ApiResponse handleUserNotFoundException(UserAlreadyExistException e) {
         return new ApiResponse(
-               USER_ALREADY_EXIST
+                USER_ALREADY_EXIST
                 , false
                 , null);
     }
@@ -84,30 +84,41 @@ public class CommonExceptionHandler {
                 , false
                 , null);
     }
+
     @ExceptionHandler(value = {FileInputException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse handleFileInputException(FileInputException e) {
         return new ApiResponse(
-                e.getMessage()
+                FILE_SIZE_MUST_BU_10MB_OR_LOWER
                 , false
                 , null);
     }
-    @ExceptionHandler(value = {FirebaseConnectionException.class})
+
+    @ExceptionHandler(FirebaseConnectionException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse handleFireBaseConnectionException(FirebaseConnectionException e) {
         return new ApiResponse(
-                e.getMessage()
+                FIREBASE_EXCEPTION
                 , false
                 , null);
     }
-    @ExceptionHandler(value = {InputException.class})
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ApiResponse handleInputException(InputException e) {
+
+    @ExceptionHandler(FirebaseMessagingException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse fireBaseException(FirebaseMessagingException e) {
         return new ApiResponse(
-                TOKEN_TIME_OUT
+                FIREBASE_EXCEPTION
                 , false
                 , null);
     }
+//    @ExceptionHandler(value = {InputException.class})
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public ApiResponse handleInputException(InputException e) {
+//        return new ApiResponse(
+//                TOKEN_TIME_OUT
+//                , false
+//                , null);
+//    }
 
     @ExceptionHandler(SmsSendingFailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -118,18 +129,9 @@ public class CommonExceptionHandler {
                 , null);
     }
 
-    @ExceptionHandler(NotEnoughSeat.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse notEnoughNotException(NotEnoughSeat e) {
-        return new ApiResponse(
-                e.getMessage()
-                , false
-                , null);
-    }
-
     @ExceptionHandler(AnnouncementNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse notEnoughNotException(AnnouncementNotFoundException e) {
+    public ApiResponse announcementNotFoundException(AnnouncementNotFoundException e) {
         return new ApiResponse(
                 e.getMessage()
                 , false
@@ -138,29 +140,32 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(AnnouncementAlreadyExistException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse notEnoughNotException(AnnouncementAlreadyExistException e) {
+    public ApiResponse announcementAlreadyExistException(AnnouncementAlreadyExistException e) {
         return new ApiResponse(
                 e.getMessage()
                 , false
                 , null);
     }
 
-    @ExceptionHandler(FirebaseMessagingException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse notEnoughNotException(FirebaseMessagingException e) {
-        return new ApiResponse(
-                FIREBASE_EXCEPTION
-                , false
-                , null);
-    }
+
     @ExceptionHandler(CarNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse notEnoughNotException(CarNotFound e) {
+    public ApiResponse carNotFound(CarNotFound e) {
         return new ApiResponse(
                 CAR_NOT_FOUND
                 , false
                 , null);
     }
+
+    @ExceptionHandler(CarAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse carAlreadyExist(CarAlreadyExistException e) {
+        return new ApiResponse(
+                CAR_NOT_FOUND
+                , false
+                , null);
+    }
+
     @ExceptionHandler(SmsServiceBroken.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiResponse notEnoughNotException(SmsServiceBroken e) {
@@ -169,14 +174,16 @@ public class CommonExceptionHandler {
                 , false
                 , null);
     }
+
     @ExceptionHandler(TimeExceededException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse reFreshTokenTimeOut(TimeExceededException e) {
         return new ApiResponse(
-               REFRESH_TOKEN_TIME_OUT
+                REFRESH_TOKEN_TIME_OUT
                 , false
                 , null);
     }
+
     @ExceptionHandler(AnnouncementAvailable.class)
     @ResponseStatus(HttpStatus.ALREADY_REPORTED)
     public ApiResponse announcementAvailable(AnnouncementAvailable e) {

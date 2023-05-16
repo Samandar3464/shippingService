@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Token {
+public class FireBaseToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -2,6 +2,8 @@ package uz.pdp.shippingservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class Attachment  {
 
     private String path;
 
-    @ManyToOne
-    private Car car;
+//    @ManyToOne
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Car car;
 }

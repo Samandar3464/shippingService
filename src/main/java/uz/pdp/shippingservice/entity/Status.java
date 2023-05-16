@@ -3,6 +3,8 @@ package uz.pdp.shippingservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.shippingservice.model.request.StatusDto;
 
 import java.util.UUID;
@@ -23,14 +25,9 @@ public class Status {
 
     private Long count;
 
-    @JsonIgnore
-    @OneToOne
-    private User user;
-
-    public Status(int stars, int count, User user) {
+    public Status(int stars, int count) {
         this.stars = (long) stars;
         this.count = (long) count;
-        this.user = user;
     }
 
     public static Status from(StatusDto statusDto, Status status) {

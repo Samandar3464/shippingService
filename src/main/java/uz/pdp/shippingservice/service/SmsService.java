@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uz.pdp.shippingservice.entity.Token;
+import uz.pdp.shippingservice.entity.FireBaseToken;
 import uz.pdp.shippingservice.exception.SmsSendingFailException;
 import uz.pdp.shippingservice.exception.SmsServiceBroken;
 import uz.pdp.shippingservice.model.request.SmsModel;
@@ -48,17 +48,17 @@ public class SmsService {
             ResponseEntity<String> response = restTemplate.postForEntity(GET_TOKEN, request, String.class);
             String body = response.getBody();
             SmsToken smsToken = objectMapper.readValue(body, SmsToken.class);
-            Token build = Token.builder().token(smsToken.getData().getToken()).build();
-            Token token = new Token();
-            List<Token> all = tokenRepository.findAll();
+            FireBaseToken build = FireBaseToken.builder().token(smsToken.getData().getToken()).build();
+            FireBaseToken fireBaseToken = new FireBaseToken();
+            List<FireBaseToken> all = tokenRepository.findAll();
             if (all.isEmpty()) {
-                token = tokenRepository.save(build);
+                fireBaseToken = tokenRepository.save(build);
             } else {
-                token.setId( all.get(0).getId());
-                token.setToken(build.getToken());
-                token = tokenRepository.save(token);
+                fireBaseToken.setId( all.get(0).getId());
+                fireBaseToken.setToken(build.getToken());
+                fireBaseToken = tokenRepository.save(fireBaseToken);
             }
-            return token.getToken();
+            return fireBaseToken.getToken();
         } catch (Exception e) {
             throw new SmsServiceBroken(CAN_NOT_TAKE_SMS_SENDING_SERVICE_TOKEN);
         }
@@ -70,7 +70,7 @@ public class SmsService {
         String token = null;
         try {
             headers.setContentType(MediaType.APPLICATION_JSON);
-            List<Token> all = tokenRepository.findAll();
+            List<FireBaseToken> all = tokenRepository.findAll();
             if (!all.isEmpty()) {
                 token = all.get(0).getToken();
             } else {

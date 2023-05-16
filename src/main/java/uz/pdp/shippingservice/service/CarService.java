@@ -7,15 +7,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import uz.pdp.shippingservice.entity.Attachment;
 import uz.pdp.shippingservice.entity.Car;
+import uz.pdp.shippingservice.entity.Role;
 import uz.pdp.shippingservice.entity.User;
 import uz.pdp.shippingservice.entity.api.ApiResponse;
+import uz.pdp.shippingservice.exception.CarAlreadyExistException;
 import uz.pdp.shippingservice.exception.CarNotFound;
 import uz.pdp.shippingservice.model.request.CarRegisterRequestDto;
 import uz.pdp.shippingservice.model.response.CarResponseDto;
 import uz.pdp.shippingservice.repository.CarRepository;
+import uz.pdp.shippingservice.repository.RoleRepository;
+import uz.pdp.shippingservice.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static uz.pdp.shippingservice.entity.constants.Constants.*;
@@ -31,20 +36,24 @@ public class CarService {
 
     private final UserService userService;
 
+    private final RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
+
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse addCar(CarRegisterRequestDto carRegisterRequestDto) throws FileUploadException {
         User user = userService.checkUserExistByContext();
-        from(carRegisterRequestDto, user);
+        List<Role> roles = user.getRoles();
+        Role byName = roleRepository.findByName(DRIVER);
+        if (!user.getRoles().contains(byName)) {
+            roles.add((byName));
+        }
+        userRepository.save(user);
+        Car car = from(carRegisterRequestDto, user);
+        carRepository.save(car);
         return new ApiResponse(SUCCESSFULLY, true);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse disActiveCarList() {
-        List<Car> allByActive = carRepository.findAllByActiveFalse();
-        List<CarResponseDto> carResponseDtoList = new ArrayList<>();
-        allByActive.forEach(this::fromCarToResponse);
-        return new ApiResponse(carResponseDtoList, true);
-    }
 
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getCarById(UUID carId) {
@@ -59,24 +68,17 @@ public class CarService {
         return new ApiResponse(fromCarToResponse(car), true);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse activateCar(UUID carId) {
-        Car car = carRepository.findById(carId).orElseThrow(() -> new CarNotFound(CAR_NOT_FOUND));
-        car.setActive(true);
-        carRepository.save(car);
-        userService.addRoleDriver(List.of(car));
-        return new ApiResponse(CAR_ACTIVATED, true);
-    }
-
     private Car from(CarRegisterRequestDto carRegisterRequestDto, User user) throws FileUploadException {
-
+        Optional<Car> byUserIdAndActiveTrue = carRepository.findByUserIdAndActiveTrue(user.getId());
+        if (byUserIdAndActiveTrue.isPresent()) {
+            throw new CarAlreadyExistException(CAR_ALREADY_EXIST);
+        }
         Car car = Car.from(carRegisterRequestDto);
         car.setPhotoDriverLicense(attachmentService.saveToSystem(carRegisterRequestDto.getPhotoDriverLicense()));
         car.setTexPassportPhoto(attachmentService.saveToSystem(carRegisterRequestDto.getTexPassportPhoto()));
-        car.setAutoPhotos(attachmentService.saveToSystemListFile(carRegisterRequestDto.getAutoPhotos()));
+        car.setCarPhotos(attachmentService.saveToSystemListFile(carRegisterRequestDto.getCarPhoto()));
         car.setUser(user);
-        Car save = carRepository.save(car);
-        return save;
+        return car;
     }
 
     private CarResponseDto fromCarToResponse(Car car) {
@@ -84,7 +86,7 @@ public class CarService {
         String texPasswordPhotoLink = attachmentService.attachUploadFolder + texPassportPhoto1.getPath() + "/" + texPassportPhoto1.getNewName() + "." + texPassportPhoto1.getType();
         Attachment photoDriverLicense1 = car.getPhotoDriverLicense();
         String photoDriverLicense2 = attachmentService.attachUploadFolder + photoDriverLicense1.getPath() + "/" + photoDriverLicense1.getNewName() + "." + photoDriverLicense1.getType();
-        List<Attachment> autoPhotos1 = car.getAutoPhotos();
+        List<Attachment> autoPhotos1 = car.getCarPhotos();
         List<String> carPhotoList = new ArrayList<>();
         for (Attachment attachment : autoPhotos1) {
             carPhotoList.add(attachmentService.attachUploadFolder + attachment.getPath() + "/" + attachment.getNewName() + "." + attachment.getType());
@@ -108,5 +110,18 @@ public class CarService {
         return carRepository.findByUserIdAndActiveTrue(user_id).orElseThrow(() ->
                 new CarNotFound(CAR_NOT_FOUND));
     }
-
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResponse disActiveCarList() {
+//        List<Car> allByActive = carRepository.findAllByActiveFalse();
+//        List<CarResponseDto> carResponseDtoList = new ArrayList<>();
+//        allByActive.forEach(this::fromCarToResponse);
+//        return new ApiResponse(carResponseDtoList, true);
+//    }
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResponse activateCar(UUID carId) {
+//        Car car = carRepository.findById(carId).orElseThrow(() -> new CarNotFound(CAR_NOT_FOUND));
+//        car.setActive(true);
+//        carRepository.save(car);
+//        return new ApiResponse(CAR_ACTIVATED, true);
+//    }
 }

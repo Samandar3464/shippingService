@@ -50,9 +50,6 @@ public class User implements UserDetails {
 
     private String fireBaseToken;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Status status;
-
     private Integer verificationCode;
 
     @Enumerated(EnumType.STRING)
@@ -61,18 +58,16 @@ public class User implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     private Attachment profilePhoto;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Status status;
+
     @ManyToMany(fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
     private List<Role> roles;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Car> cars;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        roles.forEach(role ->
-                authorityList.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
+        roles.forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
         return authorityList;
     }
 
@@ -98,18 +93,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isBlocked;
     }
 
-    public static User from(UserRegisterDto userRegisterDto,
-                            Integer verificationCode ){
+    public static User from(UserRegisterDto userRegisterDto){
         return User.builder()
                 .fullName(userRegisterDto.getFullName())
                 .phone(userRegisterDto.getPhone())
-                .birthDate(userRegisterDto.getBirthDate())
                 .gender(userRegisterDto.getGender())
                 .registeredDate(LocalDateTime.now())
-                .verificationCode(verificationCode)
+                .status(userRegisterDto.getStatus())
                 .isBlocked(true)
                 .build();
     }

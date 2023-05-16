@@ -12,22 +12,24 @@ import java.util.List;
 @Builder
 public class CarRegisterRequestDto {
 
-    private Integer autoCategoryId;
-
-    private Integer autoModelId;
-
     private String color;
 
     private String carNumber;
 
-    private String texPassport;
+    private String model;
 
-    private byte countSeat;
+    private float maximumLoad;
+
+    private float maximumLength;
+
+    private float maximumLoadWidth;
+
+    private String texPassportNumber;
 
     private MultipartFile photoDriverLicense;
 
     private MultipartFile texPassportPhoto;
 
-    private List<MultipartFile> autoPhotos;
+    private List<MultipartFile> carPhoto;
 
 }

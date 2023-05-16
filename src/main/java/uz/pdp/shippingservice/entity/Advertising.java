@@ -27,7 +27,7 @@ public class Advertising {
 
     private boolean active;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Attachment content;
 
     public static Advertising from(AdvertisingRequestDto advertisingRequestDto){

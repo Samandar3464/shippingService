@@ -40,7 +40,7 @@ public class CarResponseDto {
                  .id(car.getId())
                  .carNumber(car.getCarNumber())
                  .color(car.getColor())
-                 .texPassport(car.getTexPassport())
+                 .texPassport(car.getTexPassportNumber())
                  .active(car.isActive())
                  .build();
      }

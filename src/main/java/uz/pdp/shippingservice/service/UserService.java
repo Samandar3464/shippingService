@@ -2,7 +2,9 @@ package uz.pdp.shippingservice.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +22,17 @@ import uz.pdp.shippingservice.entity.api.ApiResponse;
 import uz.pdp.shippingservice.exception.UserAlreadyExistException;
 import uz.pdp.shippingservice.exception.UserNotFoundException;
 import uz.pdp.shippingservice.model.request.*;
+import uz.pdp.shippingservice.model.response.NotificationMessageResponse;
 import uz.pdp.shippingservice.model.response.TokenResponse;
 import uz.pdp.shippingservice.model.response.UserResponseDto;
+import uz.pdp.shippingservice.model.response.UserResponseListForAdmin;
 import uz.pdp.shippingservice.repository.CountMassageRepository;
 import uz.pdp.shippingservice.repository.RoleRepository;
 import uz.pdp.shippingservice.repository.StatusRepository;
 import uz.pdp.shippingservice.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.random.RandomGenerator;
 
 import static uz.pdp.shippingservice.entity.constants.Constants.*;
@@ -47,10 +50,11 @@ public class UserService {
     private final StatusRepository statusRepository;
     private final SmsService service;
     private final CountMassageRepository countMassageRepository;
+    private final FireBaseMessagingService fireBaseMessagingService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional(rollbackFor = {Exception.class})
-    public ApiResponse registerUser(UserRegisterDto userRegisterDto) throws FileUploadException {
+    public ApiResponse registerUser(UserRegisterDto userRegisterDto) {
         boolean byPhone = userRepository.existsByPhone(userRegisterDto.getPhone());
         if (byPhone) {
             throw new UserAlreadyExistException(USER_ALREADY_EXIST);
@@ -58,15 +62,24 @@ public class UserService {
         Integer verificationCode = verificationCodeGenerator();
 //        service.sendSms(SmsModel.builder()
 //                .mobile_phone(userRegisterDto.getPhone())
-//                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode + ". Yo'linggiz behatar  bo'lsin.")
+//                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode + ". Yo'linggiz bexatar  bo'lsin.")
 //                .from(4546)
 //                .callback_url("http://0000.uz/test.php")
 //                .build());
-        countMassageRepository.save(new CountMassage(userRegisterDto.getPhone(), 1, LocalDateTime.now()));
+//        countMassageRepository.save(new CountMassage(userRegisterDto.getPhone(), 1, LocalDateTime.now()));
+        userRegisterDto.setStatus(statusRepository.save(Status.builder().count(1L).stars(5L).build()));
         User user = userRepository.save(from(userRegisterDto, verificationCode));
-        Status status = statusRepository.save(Status.builder().user(user).count(1L).stars(5L).build());
-        user.setStatus(status);
         return new ApiResponse(SUCCESSFULLY, true, new TokenResponse(JwtGenerate.generateAccessToken(user), JwtGenerate.generateRefreshToken(user), fromUserToResponse(user)));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse verify(UserVerifyRequestDto userVerifyRequestDto) {
+        User user = userRepository.findByPhoneAndVerificationCode(userVerifyRequestDto.getPhone(), userVerifyRequestDto.getVerificationCode())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        user.setVerificationCode(0);
+        user.setBlocked(true);
+        userRepository.save(user);
+        return new ApiResponse(USER_VERIFIED_SUCCESSFULLY, true);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -81,39 +94,26 @@ public class UserService {
         }
     }
 
-
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse verify(UserVerifyRequestDto userVerifyRequestDto) {
-        User user = userRepository.findByPhoneAndVerificationCode(userVerifyRequestDto.getPhone(), userVerifyRequestDto.getVerificationCode())
-                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-//        if (!verificationCodeLiveTime(user.getVerificationCodeLiveTime())) {
-//            throw new TimeExceededException(CODE_TIME_OUT);
-//        }
-        user.setVerificationCode(0);
-        user.setBlocked(true);
-        userRepository.save(user);
-        return new ApiResponse(USER_VERIFIED_SUCCESSFULLY, true);
+    public ApiResponse forgetPassword(String number) {
+        User user = userRepository.findByPhone(number).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+        Integer verificationCode = verificationCodeGenerator();
+        System.out.println("Verification code: " + verificationCode);
+//        service.sendSms(SmsModel.builder()
+//                .mobile_phone(user.getPhone())
+//                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode +"Yo'lingiz bexatar  bo'lsin")
+//                .from(4546)
+//                .callback_url("http://0000.uz/test.php")
+//                .build());
+        countMassageRepository.save(new CountMassage(user.getPhone(), 1, LocalDateTime.now()));
+        return new ApiResponse("Verification code: " + verificationCode, true, user);
     }
+
 
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getToken(HttpServletRequest request) throws Exception {
         String accessTokenByRefresh = jwtGenerate.checkRefreshTokenValidAndGetAccessToken(request);
         return new ApiResponse("NEW ACCESS TOKEN ", true, new TokenResponse(accessTokenByRefresh));
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    public User checkUserExistByContext() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken) {
-            throw new UserNotFoundException(USER_NOT_FOUND);
-        }
-        User user = (User) authentication.getPrincipal();
-        return userRepository.findByPhone(user.getPhone()).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    public User checkUserExistById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -131,10 +131,26 @@ public class UserService {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse blockUserByID(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        user.setBlocked(true);
-        userRepository.save(user);
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse addBlockUserByID(UUID id) {
+        User user = checkUserExistById(id);
+        Optional<User> byId = userRepository.findById(id);
+        byId.get().setBlocked(false);
+        userRepository.save(byId.get());
+        NotificationMessageResponse notificationMessageResponse = NotificationMessageResponse.from(user.getFireBaseToken(), BLOCKED, new HashMap<>());
+        fireBaseMessagingService.sendNotificationByToken(notificationMessageResponse);
+        return new ApiResponse(DELETED, true);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse openToBlockUserByID(UUID id) {
+        User user = checkUserExistById(id);
+        Optional<User> byId = userRepository.findById(id);
+        byId.get().setBlocked(true);
+        userRepository.save(byId.get());
+        NotificationMessageResponse notificationMessageResponse = NotificationMessageResponse.from(user.getFireBaseToken(), OPEN, new HashMap<>());
+        fireBaseMessagingService.sendNotificationByToken(notificationMessageResponse);
         return new ApiResponse(DELETED, true);
     }
 
@@ -147,48 +163,40 @@ public class UserService {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse forgetPassword(String number){
-        User user = userRepository.findByPhone(number).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        Integer verificationCode = verificationCodeGenerator();
-        System.out.println("Verification code: "+verificationCode);
-        service.sendSms(SmsModel.builder()
-                .mobile_phone(user.getPhone())
-                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode +"Yo'lingiz bexatar  bo'lsin")
-                .from(4546)
-                .callback_url("http://0000.uz/test.php")
-                .build());
-        countMassageRepository.save(new CountMassage(user.getPhone(),1,LocalDateTime.now()));
-        return new ApiResponse("Verification code: "+verificationCode,true,user);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse changePassword(String number,String password){
+    public ApiResponse changePassword(String number, String password) {
         User user = userRepository.findByPhone(number).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
-        return new ApiResponse(user,true);
+        return new ApiResponse(user, true);
     }
 
-    public void addRoleDriver(List<Car> carList) {
-        User user = userRepository.findByCarsIn(carList).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-        List<Role> roles = user.getRoles();
-        Role byName = roleRepository.findByName(DRIVER);
-        if (!user.getRoles().contains(byName)) {
-            roles.add((byName));
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse getUserList(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> all = userRepository.findAll(pageable);
+        List<UserResponseDto> userResponseDtoList = new ArrayList<>();
+        all.forEach(obj -> userResponseDtoList.add(fromUserToResponse(obj)));
+        return new ApiResponse(new UserResponseListForAdmin(userResponseDtoList, all.getTotalElements(), all.getTotalPages(), all.getNumber()), true);
+    }
+    public User checkUserExistByContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw new UserNotFoundException(USER_NOT_FOUND);
         }
-        userRepository.save(user);
+        User user = (User) authentication.getPrincipal();
+        return userRepository.findByPhone(user.getPhone()).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
     }
 
-    private User from(UserRegisterDto userRegisterDto, int verificationCode) throws FileUploadException {
-        User user = User.from(userRegisterDto, verificationCode);
-        Attachment attachment = null;
-        if (userRegisterDto.getProfilePhoto() != null) {
-            attachment = attachmentService.saveToSystem(userRegisterDto.getProfilePhoto());
-        }
-        user.setProfilePhoto(attachment);
+    public User checkUserExistById(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+    }
+
+    private User from(UserRegisterDto userRegisterDto, int verificationCode) {
+        User user = User.from(userRegisterDto);
+        user.setVerificationCode(verificationCode);
         user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
-//        user.setRoles(List.of(roleRepository.findByName(PASSENGER)));
-        user.setRoles(List.of(roleRepository.findByName(PASSENGER), roleRepository.findByName(DRIVER)));
+//        user.setRoles(List.of(roleRepository.findByName(CARGO_OWNER)));
+        user.setRoles(List.of(roleRepository.findByName(CARGO_OWNER), roleRepository.findByName(DRIVER)));
         return user;
     }
 
@@ -203,19 +211,8 @@ public class UserService {
         return userResponseDto;
     }
 
-    private boolean verificationCodeLiveTime(LocalDateTime localDateTime) {
-        LocalDateTime now = LocalDateTime.now();
-        int day = now.getDayOfMonth() - localDateTime.getDayOfMonth();
-        int hour = now.getHour() - localDateTime.getHour();
-        int minute = now.getMinute() - localDateTime.getMinute();
-        if (day == 0 && hour == 0 && minute <= 2) {
-            return true;
-        }
-        return false;
-    }
-
     private Integer verificationCodeGenerator() {
-        return RandomGenerator.getDefault().nextInt(100000, 999999);
+        return RandomGenerator.getDefault().nextInt(1000, 9999);
     }
 
     private void countMassage() {
