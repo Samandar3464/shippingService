@@ -70,7 +70,7 @@ public class UserService {
 //                .callback_url("http://0000.uz/test.php")
 //                .build());
 //        countMassageRepository.save(new CountMassage(userRegisterDto.getPhone(), 1, LocalDateTime.now()));
-        userRegisterDto.setStatus(statusRepository.save(Status.builder().count(1L).stars(5L).build()));
+        System.out.println(verificationCode);
         User user = userRepository.save(from(userRegisterDto, verificationCode));
         return new ApiResponse(SUCCESSFULLY, true, new TokenResponse(JwtGenerate.generateAccessToken(user), JwtGenerate.generateRefreshToken(user), fromUserToResponse(user)));
     }
@@ -229,11 +229,12 @@ public class UserService {
     }
 
     private User from(UserRegisterDto userRegisterDto, int verificationCode) {
+        userRegisterDto.setStatus(statusRepository.save(Status.builder().count(1L).stars(5L).build()));
         User user = User.from(userRegisterDto);
         user.setVerificationCode(verificationCode);
         user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
 //        user.setRoles(List.of(roleRepository.findByName(CARGO_OWNER)));
-        user.setRoles(List.of(roleRepository.findByName(CARGO_OWNER), roleRepository.findByName(DRIVER)));
+        user.setRoles(List.of(roleRepository.findByName(CLIENT), roleRepository.findByName(DRIVER)));
         return user;
     }
 

@@ -10,6 +10,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
+    List<Notification> findAllBySenderIdAndDeletedFalseAndNotificationTypeOrderByCreatedTimeDesc(UUID senderId, NotificationType notificationType);
+
+    List<Notification> findAllByReceiverIdAndActiveAndReceivedAndDeletedFalseAndNotificationTypeOrderByCreatedTime(UUID id, boolean b, boolean b1, NotificationType notificationType);
+
+    List<Notification> findAllBySenderIdAndReceivedTrueAndNotificationTypeOrderByCreatedTime(UUID id, NotificationType notificationType);
+
+    List<Notification> findAllByReceiverIdAndReceivedTrueAndNotificationTypeOrderByCreatedTime(UUID id, NotificationType notificationType);
+
+    Optional<Notification> findFirstBySenderIdAndReceiverIdAndAnnouncementPassengerIdAndActiveTrueAndReceivedFalseOrderByCreatedTimeDesc(UUID id, UUID id1, UUID announcementId);
+
+//    List<Notification> findAllByReceiverIdAndReceivedTrueAndNotificationTypeOrderByCreatedTime(UUID id, NotificationType notificationType);
 
 //    Optional<Notification> findByIdAndActive(UUID id, boolean active);
 //

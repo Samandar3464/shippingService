@@ -17,23 +17,23 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyRole('YOLOVCHI','ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT','ADMIN')")
     public ApiResponse addCar(@ModelAttribute @Validated CarRegisterRequestDto carRegisterRequestDto) {
         return carService.addCar(carRegisterRequestDto);
     }
     @GetMapping("/getCar")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','ADMIN')")
+    @PreAuthorize("hasAnyRole('DRIVER','ADMIN')")
     public ApiResponse getCar() {
         return carService.getCar();
     }
-    @DeleteMapping("/getCarById/{id}")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','ADMIN')")
+    @GetMapping("/getCarById/{id}")
+    @PreAuthorize("hasAnyRole('DRIVER','ADMIN')")
     public ApiResponse getCatById(@PathVariable UUID id) {
         return carService.getCarById(id);
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','ADMIN')")
+    @PreAuthorize("hasAnyRole('DRIVER','ADMIN')")
     public ApiResponse deleteCarByID(@PathVariable UUID id) {
         return carService.deleteCarByID(id);
     }

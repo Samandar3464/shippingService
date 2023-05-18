@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/getById/{id}")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','YOLOVCHI','ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse getUserById(@PathVariable UUID id) {
         return userService.getByUserId(id);
     }
@@ -65,8 +65,6 @@ public class UserController {
         return userService.openToBlockUserByID(id);
     }
 
-
-
     @PostMapping("/setFireBaseToken")
     public ApiResponse setFireBaseToken(@RequestBody FireBaseTokenRegisterDto fireBaseTokenRegisterDto) {
         return userService.saveFireBaseToken(fireBaseTokenRegisterDto);
@@ -80,7 +78,7 @@ public class UserController {
         return userService.changePassword(number, password);
     }
     @PutMapping("/update")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','YOLOVCHI','ADMIN')")
+    @PreAuthorize("hasAnyRole('DRIVER','CLIENT','ADMIN')")
     public ApiResponse update(@ModelAttribute UserUpdateDto userUpdateDto) {
         return userService.updateUser(userUpdateDto);
     }
@@ -92,7 +90,6 @@ public class UserController {
     }
 
     @GetMapping("/getByToken")
-    @PreAuthorize("hasAnyRole('HAYDOVCHI','YOLOVCHI','ADMIN')")
     public ApiResponse checkUserResponseExistById() {
         return userService.checkUserResponseExistById();
     }

@@ -28,7 +28,6 @@ public class NotificationRequestDto {
 
     private UUID announcementPassengerId;
 
-    private List<UUID> seatIdList;
 
     private HashMap<String, String> date;
 

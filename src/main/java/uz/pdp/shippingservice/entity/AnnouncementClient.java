@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import uz.pdp.shippingservice.model.request.AnnouncementPassengerDto;
+import uz.pdp.shippingservice.model.request.AnnouncementClientDto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-public class AnnouncementPassenger {
+public class AnnouncementClient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,8 +54,8 @@ public class AnnouncementPassenger {
 
     private double price;
 
-    public static AnnouncementPassenger from(AnnouncementPassengerDto announcementRequestDto) {
-        return AnnouncementPassenger.builder()
+    public static AnnouncementClient from(AnnouncementClientDto announcementRequestDto) {
+        return AnnouncementClient.builder()
                 .fromLatitude(announcementRequestDto.getFromLatitude())
                 .fromLongitude(announcementRequestDto.getFromLongitude())
                 .toLatitude(announcementRequestDto.getToLatitude())

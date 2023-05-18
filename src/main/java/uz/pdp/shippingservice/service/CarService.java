@@ -80,7 +80,7 @@ public class CarService {
         Car car = Car.from(carRegisterRequestDto);
         car.setPhotoDriverLicense(attachmentService.saveToSystem(carRegisterRequestDto.getPhotoDriverLicense()));
         car.setTexPassportPhoto(attachmentService.saveToSystem(carRegisterRequestDto.getTexPassportPhoto()));
-        car.setCarPhotos(attachmentService.saveToSystemListFile(carRegisterRequestDto.getCarPhoto()));
+        car.setCarPhotos(attachmentService.saveToSystemListFile(carRegisterRequestDto.getCarPhotoList()));
         car.setUser(user);
         return car;
     }

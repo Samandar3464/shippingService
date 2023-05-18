@@ -17,9 +17,9 @@ import uz.pdp.shippingservice.model.response.AnnouncementDriverResponse;
 import uz.pdp.shippingservice.model.response.AnnouncementDriverResponseList;
 import uz.pdp.shippingservice.repository.AnnouncementDriverRepository;
 import uz.pdp.shippingservice.repository.CityRepository;
-import uz.pdp.shippingservice.repository.NotificationRepository;
 import uz.pdp.shippingservice.repository.RegionRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,8 +36,6 @@ public class AnnouncementDriverService {
     private final RegionRepository regionRepository;
     private final UserService userService;
     private final AttachmentService attachmentService;
-    private final NotificationRepository notificationRepository;
-    private final AnnouncementPassengerService announcementPassengerService;
     private final CityRepository cityRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,9 +56,10 @@ public class AnnouncementDriverService {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getAnnouncementDriverByFilter(GetByFilter getByFilter) {
         List<AnnouncementDriver> driverList = announcementDriverRepository
-                .findAllByCurrentRegionIdAndCurrentCityIdOrderByCreatedTimeDesc(
+                .findAllByCurrentRegionIdAndCurrentCityIdAndCreatedTimeAfterOrderByCreatedTimeDesc(
                         getByFilter.getCurrentRegionId()
-                        , getByFilter.getCurrentCityId());
+                        , getByFilter.getCurrentCityId()
+                        , LocalDateTime.now().minusDays(1));
         List<AnnouncementDriverResponseList> announcementDrivers = new ArrayList<>();
         driverList.forEach(announcementDriver -> announcementDrivers.add(AnnouncementDriverResponseList.from(announcementDriver)));
         return new ApiResponse(announcementDrivers, true);
@@ -79,13 +78,22 @@ public class AnnouncementDriverService {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse getOwnDriverAnnouncements() {
+    public ApiResponse getDriverOwnAnnouncements() {
         User user = userService.checkUserExistByContext();
-        List<AnnouncementDriver> announcementDrivers = announcementDriverRepository.findAllByUserIdAndDeletedFalseOrderByCreatedTimeDesc(user.getId());
+        List<AnnouncementDriver> announcementDrivers = announcementDriverRepository.findAllByUserIdAndDeletedFalseOrderByCreatedTime(user.getId());
         List<AnnouncementDriverResponseList> announcementDriverResponses = new ArrayList<>();
         announcementDrivers.forEach(obj -> announcementDriverResponses.add(AnnouncementDriverResponseList.from(obj)));
         return new ApiResponse(announcementDriverResponses, true);
     }
+
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResponse getDriverOwnAnnouncementsHistory() {
+//        User user = userService.checkUserExistByContext();
+//        List<AnnouncementDriver> announcementDrivers = announcementDriverRepository.findAllByUserIdAndDeletedFalseOrderByCreatedTime(user.getId());
+//        List<AnnouncementDriverResponseList> announcementDriverResponses = new ArrayList<>();
+//        announcementDrivers.forEach(obj -> announcementDriverResponses.add(AnnouncementDriverResponseList.from(obj)));
+//        return new ApiResponse(announcementDriverResponses, true);
+//    }
 
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse deleteDriverAnnouncement(UUID id) {
@@ -95,16 +103,20 @@ public class AnnouncementDriverService {
         return new ApiResponse(DELETED, true);
     }
 
-    public AnnouncementDriver getByIdAndDeletedFalse(UUID announcement_id) {
-        return announcementDriverRepository.findByIdAndDeletedFalse(announcement_id)
+    public AnnouncementDriver getByIdAndDeletedFalse(UUID announcementId) {
+        return announcementDriverRepository.findByIdAndDeletedFalse(announcementId)
                 .orElseThrow(() -> new AnnouncementNotFoundException(DRIVER_ANNOUNCEMENT_NOT_FOUND));
     }
 
-    public AnnouncementDriver getByIdAndActiveAndDeletedFalse(UUID announcement_id, boolean active) {
-        return announcementDriverRepository.findByIdAndActiveAndDeletedFalse(announcement_id, active)
+    public AnnouncementDriver getByIdAndActiveAndDeletedFalse(UUID announcementId, boolean active) {
+        return announcementDriverRepository.findByIdAndActiveAndDeletedFalse(announcementId, active)
                 .orElseThrow(() -> new AnnouncementNotFoundException(DRIVER_ANNOUNCEMENT_NOT_FOUND));
     }
 
+    public AnnouncementDriver getById(UUID announcementId) {
+        return announcementDriverRepository.findById(announcementId)
+                .orElseThrow(() -> new AnnouncementNotFoundException(DRIVER_ANNOUNCEMENT_NOT_FOUND));
+    }
 
     private AnnouncementDriver fromAnnouncementDriver(AnnouncementDriverDto announcement, User user, Car car) {
         AnnouncementDriver announcementDriver = AnnouncementDriver.from(announcement);
@@ -129,11 +141,12 @@ public class AnnouncementDriverService {
         return announcementDriverRepository.existsByUserIdAndActiveTrueAndDeletedFalse(userId);
     }
 
-        public List<AnnouncementDriver> getByUserIdAndActiveAndDeletedFalse(UUID user_id, boolean active) {
-        return announcementDriverRepository.findAllByUserIdAndActiveAndDeletedFalseOrderByCreatedTimeDesc(user_id, active);
+    public List<AnnouncementDriver> getByUserIdAndActiveAndDeletedFalseList(UUID userId, boolean active) {
+        return announcementDriverRepository.findAllByUserIdAndActiveAndDeletedFalseOrderByCreatedTimeDesc(userId, active);
     }
-//
-//    public List<AnnouncementDriver> getByUserIdAndActiveAndParcelAndDeletedFalse(UUID user_id, boolean active) {
-//        return announcementDriverRepository.findAllByUserIdAndActiveAndParcelTrueAndDeletedFalse(user_id, active);
-//    }
+
+    public AnnouncementDriver getByUserIdAndActiveAndDeletedFalse(UUID userId, boolean active) {
+        return announcementDriverRepository.findByUserIdAndActiveAndDeletedFalseOrderByCreatedTimeDesc(userId, active)
+                .orElseThrow(() -> new AnnouncementNotFoundException(DRIVER_ANNOUNCEMENT_NOT_FOUND));
+    }
 }

@@ -34,6 +34,7 @@ public class Notification {
     private boolean received;
 
     private boolean read;
+
     private boolean deleted;
 
     private LocalDateTime createdTime;

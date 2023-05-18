@@ -17,6 +17,8 @@ import java.util.UUID;
 public class AnnouncementDriverResponseList {
     private UUID id;
 
+    private String fulName;
+
     private String currentRegion;
 
     private String currentCity;
@@ -32,6 +34,19 @@ public class AnnouncementDriverResponseList {
         return AnnouncementDriverResponseList
                 .builder()
                 .id(announcementDriver.getId())
+                .currentRegion(announcementDriver.getCurrentRegion().getName())
+                .currentCity(announcementDriver.getCurrentCity() == null ? null : announcementDriver.getCurrentCity().getName())
+                .maximumLoad(car.getMaximumLoad())
+                .maximumLength(car.getMaximumLength())
+                .maximumLoadWidth(car.getMaximumLoadWidth())
+                .build();
+    }
+    public static AnnouncementDriverResponseList fromForNotification(AnnouncementDriver announcementDriver, String fullName) {
+        Car car = announcementDriver.getCar();
+        return AnnouncementDriverResponseList
+                .builder()
+                .id(announcementDriver.getId())
+                .fulName(fullName)
                 .currentRegion(announcementDriver.getCurrentRegion().getName())
                 .currentCity(announcementDriver.getCurrentCity() == null ? null : announcementDriver.getCurrentCity().getName())
                 .maximumLoad(car.getMaximumLoad())

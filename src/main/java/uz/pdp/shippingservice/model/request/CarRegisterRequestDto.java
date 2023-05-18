@@ -30,6 +30,6 @@ public class CarRegisterRequestDto {
 
     private MultipartFile texPassportPhoto;
 
-    private List<MultipartFile> carPhoto;
+    private List<MultipartFile> carPhotoList;
 
 }

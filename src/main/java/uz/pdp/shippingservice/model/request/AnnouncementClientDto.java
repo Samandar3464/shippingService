@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnnouncementPassengerDto {
+public class AnnouncementClientDto {
 
      private Integer fromRegionId;
      private Integer toRegionId;

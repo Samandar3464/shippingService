@@ -35,7 +35,7 @@ public class DataLoader implements CommandLineRunner {
         if (initMode.equals("always")) {
             Role admim = new Role(1, ADMIN);
             Role save15 = roleRepository.save(admim);
-            Role yolovchi = new Role(2, CARGO_OWNER);
+            Role yolovchi = new Role(2, CLIENT);
             Role save16 = roleRepository.save(yolovchi);
             Role haydovchi = new Role(3, DRIVER);
             Role save17 = roleRepository.save(haydovchi);
