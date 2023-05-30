@@ -1,46 +1,47 @@
-name: shippingservice
+name: Build & Deploy Spring app
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-deploy:
+    name: Build and Deploy Spring boot for beginner
     runs-on: ubuntu-latest
-    services:
-      db:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: axborot1116
-          POSTGRES_DB: shipping
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build with Maven
-        run: mvn clean install
+          distribution: 'corretto'
+          java-version: 17
 
-      - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v5
+
+      - name: Build the application
+        run: |
+          mvn clean
+          mvn -B package --file pom.xml
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
         with:
-          image: samandar346/service
-          tags: latest
-          build-args: |
-            DB_URL=jdbc:postgresql://localhost:5432/shipping
-            DB_USERNAME=postgres
-            DB_PASSWORD=axborot1116
-          registry: docker.io
+          context: .
           dockerfile: Dockerfile
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          push: false
+          tags: ${{ secrets.USERNAME }}/shipping:today
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: ${{ secrets.USERNAME }}/shipping:today

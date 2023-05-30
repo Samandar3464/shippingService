@@ -1,4 +1,5 @@
 FROM openjdk:17-alpine
-ADD /target/shippingService-0.0.1.jar shippingService.jar
-ENTRYPOINT ["java", "-jar", "shippingService.jar"]
+WORKDIR /app
+COPY target/shippingService-0.0.1.jar /app/shippingService.jar
 EXPOSE 8080
+CMD ["java", "-jar", "shippingService.jar"]
