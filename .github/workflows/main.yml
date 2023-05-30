@@ -2,13 +2,27 @@ name: Shipping service
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
+    pull_request:
+      branches: [ "master" ]
+
 
 jobs:
   build-deploy:
     name: build and deploy shipping service
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: axborot1116
+          POSTGRES_DB: shipping
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - name: Checkout code
         uses: action/checkout@v3
@@ -16,8 +30,9 @@ jobs:
       - name: Setup JDK 17
         uses: action/setup-java@v3
         with:
-          distribution: 'corretto'
           java-version: 17
+          distribution: 'temurin'
+          cache: maven
 
       - name: Unit test
         run: nvm -B test --file pom.xml
