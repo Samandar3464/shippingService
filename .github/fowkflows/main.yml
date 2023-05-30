@@ -1,0 +1,26 @@
+name: Shipping service
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-deploy:
+    name: build and deploy shipping service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: action/checkout@v3
+
+      - name: Setup JDK 17
+        uses: action/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: 17
+
+      - name: Unit test
+        run: nvm -B test --file pom.xml
+
+      - name: Build application
+        run: mvn clean install
