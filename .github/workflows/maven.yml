@@ -1,5 +1,4 @@
-
-name: Java CI with Maven
+name: Shipping service
 
 on:
   push:
@@ -20,8 +19,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Unit test
+      run: nvm -B test --file pom.xml
+
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn clean install
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
