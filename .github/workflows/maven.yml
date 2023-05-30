@@ -19,8 +19,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Unit test
-      run: nvm -B test --file pom.xml
+
 
     - name: Build with Maven
       run: mvn clean install
