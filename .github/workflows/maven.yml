@@ -42,7 +42,7 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/shippingService:$(date-'%Y-%m-%d%H-%M-%S')
+          tags: ${{ secrets.DOCKER_USERNAME }}/shippingservice:$(date-'%Y-%m-%d%H-%M-%S')
 
 
 
