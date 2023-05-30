@@ -31,7 +31,7 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: false
-          tags: ${{ secrets.DOCKER_USERNAME }}/shippingservice:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/service:latest
 
 
 #      - name: Login to docker hub
