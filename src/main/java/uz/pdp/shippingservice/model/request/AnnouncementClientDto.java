@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AnnouncementClientDto {
 
+     private Integer fromCountryId;
+     private Integer toCountryId;
      private Integer fromRegionId;
      private Integer toRegionId;
      private Integer fromCityId;

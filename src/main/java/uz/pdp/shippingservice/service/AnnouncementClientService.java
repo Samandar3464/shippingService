@@ -14,10 +14,7 @@ import uz.pdp.shippingservice.model.request.GetByFilter;
 import uz.pdp.shippingservice.model.response.AnnouncementClientResponse;
 import uz.pdp.shippingservice.model.response.AnnouncementClientResponseList;
 import uz.pdp.shippingservice.model.response.UserResponseDto;
-import uz.pdp.shippingservice.repository.AnnouncementClientRepository;
-import uz.pdp.shippingservice.repository.AnnouncementDriverRepository;
-import uz.pdp.shippingservice.repository.CityRepository;
-import uz.pdp.shippingservice.repository.RegionRepository;
+import uz.pdp.shippingservice.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class AnnouncementClientService {
     private final CityRepository cityRepository;
     private final UserService userService;
     private final AnnouncementClientRepository announcementClientRepository;
-    private final AnnouncementDriverRepository announcementDriverRepository;
+    private final CountryRepository countryRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse add(AnnouncementClientDto announcementClientDto) {
@@ -132,10 +129,12 @@ public class AnnouncementClientService {
     private AnnouncementClient fromRequest(AnnouncementClientDto announcementClientDto, User user) {
         AnnouncementClient announcementClient = AnnouncementClient.from(announcementClientDto);
         announcementClient.setUser(user);
-        announcementClient.setFromRegion(regionRepository.getById(announcementClientDto.getFromRegionId()));
-        announcementClient.setToRegion(regionRepository.getById(announcementClientDto.getToRegionId()));
-        announcementClient.setFromCity(cityRepository.getById(announcementClientDto.getFromCityId()));
-        announcementClient.setToCity(cityRepository.getById(announcementClientDto.getToCityId()));
+        announcementClient.setFromCountry(countryRepository.getById(announcementClientDto.getFromRegionId()));
+        announcementClient.setToCountry(countryRepository.getById(announcementClientDto.getFromRegionId()));
+        announcementClient.setFromRegion(announcementClientDto.getFromRegionId() == null? null: regionRepository.getById(announcementClientDto.getFromRegionId()));
+        announcementClient.setToRegion(announcementClientDto.getToRegionId() == null? null: regionRepository.getById(announcementClientDto.getToRegionId()));
+        announcementClient.setFromCity(announcementClientDto.getFromCityId() == null? null: cityRepository.getById(announcementClientDto.getFromCityId()));
+        announcementClient.setToCity(announcementClientDto.getToCityId() == null? null: cityRepository.getById(announcementClientDto.getToCityId()));
         return announcementClient;
     }
 }

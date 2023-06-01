@@ -20,14 +20,26 @@ public class AnnouncementClient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Country fromCountry;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Country toCountry;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Region fromRegion;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Region toRegion;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private City fromCity;
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private City toCity;
 
     @ManyToOne

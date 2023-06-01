@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnnouncementDriverDto {
+     private Integer countryId;
 
-     private Integer currentRegionId;
+     private Integer regionId;
 
-     private Integer currentCityId;
+     private Integer cityId;
 
      private double currentLatitude;
 
