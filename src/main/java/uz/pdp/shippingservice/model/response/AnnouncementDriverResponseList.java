@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import uz.pdp.shippingservice.entity.AnnouncementDriver;
 import uz.pdp.shippingservice.entity.Car;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -34,8 +33,8 @@ public class AnnouncementDriverResponseList {
         return AnnouncementDriverResponseList
                 .builder()
                 .id(announcementDriver.getId())
-                .currentRegion(announcementDriver.getCurrentRegion().getName())
-                .currentCity(announcementDriver.getCurrentCity() == null ? null : announcementDriver.getCurrentCity().getName())
+                .currentRegion(announcementDriver.getRegion().getName())
+                .currentCity(announcementDriver.getCity() == null ? null : announcementDriver.getCity().getName())
                 .maximumLoad(car.getMaximumLoad())
                 .maximumLength(car.getMaximumLength())
                 .maximumLoadWidth(car.getMaximumLoadWidth())
@@ -47,8 +46,8 @@ public class AnnouncementDriverResponseList {
                 .builder()
                 .id(announcementDriver.getId())
                 .fulName(fullName)
-                .currentRegion(announcementDriver.getCurrentRegion().getName())
-                .currentCity(announcementDriver.getCurrentCity() == null ? null : announcementDriver.getCurrentCity().getName())
+                .currentRegion(announcementDriver.getRegion().getName())
+                .currentCity(announcementDriver.getCity() == null ? null : announcementDriver.getCity().getName())
                 .maximumLoad(car.getMaximumLoad())
                 .maximumLength(car.getMaximumLength())
                 .maximumLoadWidth(car.getMaximumLoadWidth())

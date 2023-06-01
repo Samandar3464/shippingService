@@ -36,16 +36,23 @@ public class AnnouncementDriver {
      private LocalDateTime createdTime;
 
      @ManyToOne
-     private Region currentRegion;
+     @OnDelete(action = OnDeleteAction.CASCADE)
+     private Country country;
 
      @ManyToOne
-     private City currentCity;
+     @OnDelete(action = OnDeleteAction.CASCADE)
+     private Region region;
+
+     @ManyToOne
+     @OnDelete(action = OnDeleteAction.CASCADE)
+     private City city;
 
      @ManyToOne
      @OnDelete(action = OnDeleteAction.CASCADE)
      private User user;
 
      @ManyToOne
+     @OnDelete(action = OnDeleteAction.CASCADE)
      private Car car;
 
      public static AnnouncementDriver from(AnnouncementDriverDto announcementRequestDto) {

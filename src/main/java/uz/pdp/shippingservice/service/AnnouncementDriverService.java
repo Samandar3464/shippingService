@@ -19,7 +19,6 @@ import uz.pdp.shippingservice.repository.AnnouncementDriverRepository;
 import uz.pdp.shippingservice.repository.CityRepository;
 import uz.pdp.shippingservice.repository.RegionRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,10 +55,10 @@ public class AnnouncementDriverService {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getAnnouncementDriverByFilter(GetByFilter getByFilter) {
         List<AnnouncementDriver> driverList = announcementDriverRepository
-                .findAllByCurrentRegionIdAndCurrentCityIdAndCreatedTimeAfterOrderByCreatedTimeDesc(
-                        getByFilter.getCurrentRegionId()
-                        , getByFilter.getCurrentCityId()
-                        , LocalDateTime.now().minusDays(1));
+                .findAllByCountryIdOrRegionIdOrCityIdOrderByCreatedTimeDesc(
+                        getByFilter.getCountryId(),
+                        getByFilter.getRegionId(),
+                        getByFilter.getCityId());
         List<AnnouncementDriverResponseList> announcementDrivers = new ArrayList<>();
         driverList.forEach(announcementDriver -> announcementDrivers.add(AnnouncementDriverResponseList.from(announcementDriver)));
         return new ApiResponse(announcementDrivers, true);
@@ -122,8 +121,8 @@ public class AnnouncementDriverService {
         AnnouncementDriver announcementDriver = AnnouncementDriver.from(announcement);
         announcementDriver.setCar(car);
         announcementDriver.setUser(user);
-        announcementDriver.setCurrentRegion(regionRepository.getById(announcement.getCurrentRegionId()));
-        announcementDriver.setCurrentCity(announcement.getCurrentCityId() == null ? null : cityRepository.getById(announcement.getCurrentCityId()));
+        announcementDriver.setRegion(regionRepository.getById(announcement.getCurrentRegionId()));
+        announcementDriver.setCity(announcement.getCurrentCityId() == null ? null : cityRepository.getById(announcement.getCurrentCityId()));
         return announcementDriver;
     }
 

@@ -42,8 +42,8 @@ public class AnnouncementDriverResponse {
         return AnnouncementDriverResponse
                 .builder()
                 .id(announcementDriver.getId())
-                .currentRegion(announcementDriver.getCurrentRegion().getName())
-                .currentCity(announcementDriver.getCurrentCity() == null ? null : announcementDriver.getCurrentCity().getName())
+                .currentRegion(announcementDriver.getRegion().getName())
+                .currentCity(announcementDriver.getCity() == null ? null : announcementDriver.getCity().getName())
                 .info(announcementDriver.getInfo())
                 .currentLongitude(announcementDriver.getCurrentLongitude())
                 .currentLatitude(announcementDriver.getCurrentLatitude())

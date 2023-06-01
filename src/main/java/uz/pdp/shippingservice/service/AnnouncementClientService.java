@@ -58,8 +58,8 @@ public class AnnouncementClientService {
     public ApiResponse getAnnouncementClientByFilter(GetByFilter getByFilter) {
         List<AnnouncementClient> byFilter = announcementClientRepository
                 .findAllByFromRegionIdAndFromCityIdAndTimeToSendBetweenOrderByCreatedTimeDesc(
-                        getByFilter.getCurrentRegionId(),
-                        getByFilter.getCurrentCityId(),
+                        getByFilter.getRegionId(),
+                        getByFilter.getCityId(),
                         getByFilter.getTime1(),
                         getByFilter.getTime2());
         List<AnnouncementClientResponseList> passengerResponses = new ArrayList<>();
