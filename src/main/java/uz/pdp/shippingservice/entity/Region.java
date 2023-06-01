@@ -1,7 +1,10 @@
 package uz.pdp.shippingservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import uz.pdp.shippingservice.model.request.RegionRegisterRequestDto;
 
 @Getter
@@ -18,7 +21,15 @@ public class Region {
     @Column(unique = true)
     private String name;
 
-    public static Region from(RegionRegisterRequestDto regionRegisterRequestDto){
-        return Region.builder().name(regionRegisterRequestDto.getName()).build();
+    @JsonIgnore
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Country country;
+
+    public static Region from(RegionRegisterRequestDto regionRegisterRequestDto,Country country){
+        return Region.builder()
+                .name(regionRegisterRequestDto.getName())
+                .country(country)
+                .build();
     }
 }

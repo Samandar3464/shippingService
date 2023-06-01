@@ -19,6 +19,12 @@ public class RegionController {
           return regionService.addRegion(regionRegisterRequestDto);
      }
 
+     @PutMapping("/edit")
+     @PreAuthorize("hasRole('ADMIN')")
+     public ApiResponse editRegion(@RequestBody RegionRegisterRequestDto regionRegisterRequestDto) {
+          return regionService.editRegion(regionRegisterRequestDto);
+     }
+
      @GetMapping("/getRegionList")
      public ApiResponse getRegionList() {
           return regionService.getRegionList();

@@ -18,6 +18,7 @@ public class Constants {
     public static final String FILE_COULD_NOT_UPLOADED="FILE COULD NOT UPLOADED";
     public static final String FILE_NOT_FOUND="FILE NOT FOUND";
     public static final String REGION_ALREADY_EXIST="REGION ALREADY EXIST";
+    public static final String COUNTRY_ALREADY_EXIST="COUNTRY ALREADY EXIST";
     public static final String CITY_ALREADY_EXIST="CITY ALREADY EXIST";
     public static final String CAR_NOT_FOUND="CAR NOT FOUND";
     public static final String NOTIFICATION_NOT_FOUND="NOTIFICATION NOT FOUND";
@@ -25,6 +26,7 @@ public class Constants {
     public static final String USER_VERIFIED_SUCCESSFULLY="USER VERIFIED SUCCESSFULLY";
     public static final String YOU_ACCEPTED_REQUEST ="YOU ACCEPTED REQUEST";
     public static final String REGION_NOT_FOUND="REGION NOT FOUND";
+    public static final String COUNTRY_NOT_FOUND="COUNTRY NOT FOUND";
     public static final String CITY_NOT_FOUND="CITY NOT FOUND";
     public static final String YOU_COME_TO_MESSAGE_FROM_DRIVER="SIZGA HAYDOVCHIDAN HABAR KELDI";
     public static final String PASSENGER_AGREE="Klent yukni olib borib berishinggizga  rozi bo'ldi.";
