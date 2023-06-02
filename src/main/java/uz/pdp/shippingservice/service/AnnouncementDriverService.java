@@ -17,6 +17,7 @@ import uz.pdp.shippingservice.model.response.AnnouncementDriverResponse;
 import uz.pdp.shippingservice.model.response.AnnouncementDriverResponseList;
 import uz.pdp.shippingservice.repository.AnnouncementDriverRepository;
 import uz.pdp.shippingservice.repository.CityRepository;
+import uz.pdp.shippingservice.repository.CountryRepository;
 import uz.pdp.shippingservice.repository.RegionRepository;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class AnnouncementDriverService {
     private final UserService userService;
     private final AttachmentService attachmentService;
     private final CityRepository cityRepository;
+    private final CountryRepository countryRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse add(AnnouncementDriverDto announcementDriverDto) {
@@ -55,10 +57,7 @@ public class AnnouncementDriverService {
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse getAnnouncementDriverByFilter(GetByFilter getByFilter) {
         List<AnnouncementDriver> driverList = announcementDriverRepository
-                .findAllByCountryIdOrRegionIdOrCityIdOrderByCreatedTimeDesc(
-                        getByFilter.getCountryId(),
-                        getByFilter.getRegionId(),
-                        getByFilter.getCityId());
+                .findAllByCountryIdOrderByCreatedTimeDesc(getByFilter.getCountryId());
         List<AnnouncementDriverResponseList> announcementDrivers = new ArrayList<>();
         driverList.forEach(announcementDriver -> announcementDrivers.add(AnnouncementDriverResponseList.from(announcementDriver)));
         return new ApiResponse(announcementDrivers, true);
@@ -121,8 +120,9 @@ public class AnnouncementDriverService {
         AnnouncementDriver announcementDriver = AnnouncementDriver.from(announcement);
         announcementDriver.setCar(car);
         announcementDriver.setUser(user);
-        announcementDriver.setRegion(regionRepository.getById(announcement.getCurrentRegionId()));
-        announcementDriver.setCity(announcement.getCurrentCityId() == null ? null : cityRepository.getById(announcement.getCurrentCityId()));
+        announcementDriver.setCountry(countryRepository.getById(announcement.getCountryId()));
+        announcementDriver.setRegion(announcement.getRegionId() == null ? null : regionRepository.getById(announcement.getRegionId()));
+        announcementDriver.setCity(announcement.getCityId() == null ? null : cityRepository.getById(announcement.getCityId()));
         return announcementDriver;
     }
 

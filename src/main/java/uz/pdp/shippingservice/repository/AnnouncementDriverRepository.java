@@ -11,7 +11,9 @@ public interface AnnouncementDriverRepository extends JpaRepository<Announcement
 
     List<AnnouncementDriver> findAllByUserIdAndDeletedFalseOrderByCreatedTime(UUID user_id);
     List<AnnouncementDriver> findAllByUserIdAndActiveAndDeletedFalseOrderByCreatedTimeDesc(UUID user_id, boolean active);
-    List<AnnouncementDriver> findAllByCountryIdOrRegionIdOrCityIdOrderByCreatedTimeDesc(Integer CountryId, Integer currentRegion_id, Integer currentCity_id);
+    List<AnnouncementDriver> findAllByCountryIdOrderByCreatedTimeDesc(Integer CountryId);
+    List<AnnouncementDriver> findAllByRegionIdOrderByCreatedTimeDesc(Integer currentRegionId);
+    List<AnnouncementDriver> findAllByCityIdOrderByCreatedTimeDesc(Integer currentCityId);
     boolean existsByUserIdAndActiveTrueAndDeletedFalse(UUID user_id);
     Optional<AnnouncementDriver> findByIdAndActiveAndDeletedFalse(UUID id, boolean active);
     Optional<AnnouncementDriver> findByIdAndDeletedFalse(UUID id);
