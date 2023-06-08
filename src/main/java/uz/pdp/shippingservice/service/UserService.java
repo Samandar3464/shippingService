@@ -65,14 +65,14 @@ public class UserService {
         Integer verificationCode = verificationCodeGenerator();
 //        service.sendSms(SmsModel.builder()
 //                .mobile_phone(userRegisterDto.getPhone())
-//                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode + ". Yo'linggiz bexatar  bo'lsin.")
+//                .message("Tasdiqlash kodi: " + verificationCode + ". Yo'linggiz bexatar  bo'lsin.")
 //                .from(4546)
 //                .callback_url("http://0000.uz/test.php")
 //                .build());
 //        countMassageRepository.save(new CountMassage(userRegisterDto.getPhone(), 1, LocalDateTime.now()));
         System.out.println(verificationCode);
-        User user = userRepository.save(from(userRegisterDto, verificationCode));
-        return new ApiResponse(SUCCESSFULLY, true, new TokenResponse(JwtGenerate.generateAccessToken(user), JwtGenerate.generateRefreshToken(user), fromUserToResponse(user)));
+        userRepository.save(from(userRegisterDto, verificationCode));
+        return new ApiResponse(SUCCESSFULLY, true);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -82,7 +82,7 @@ public class UserService {
         user.setVerificationCode(0);
         user.setBlocked(true);
         userRepository.save(user);
-        return new ApiResponse(USER_VERIFIED_SUCCESSFULLY, true);
+        return new ApiResponse(USER_VERIFIED_SUCCESSFULLY, true,new TokenResponse(JwtGenerate.generateAccessToken(user), JwtGenerate.generateRefreshToken(user), fromUserToResponse(user)));
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -104,12 +104,12 @@ public class UserService {
         System.out.println("Verification code: " + verificationCode);
 //        service.sendSms(SmsModel.builder()
 //                .mobile_phone(user.getPhone())
-//                .message("DexTaxi. Tasdiqlash kodi: " + verificationCode +"Yo'lingiz bexatar  bo'lsin")
+//                .message("Tasdiqlash kodi: " + verificationCode +"Yo'lingiz bexatar  bo'lsin")
 //                .from(4546)
 //                .callback_url("http://0000.uz/test.php")
 //                .build());
         countMassageRepository.save(new CountMassage(user.getPhone(), 1, LocalDateTime.now()));
-        return new ApiResponse("Verification code: " + verificationCode, true, user);
+        return new ApiResponse(SUCCESSFULLY, true, user);
     }
 
 
@@ -198,7 +198,7 @@ public class UserService {
         System.out.println(integer);
         service.sendSms(SmsModel.builder()
                 .mobile_phone(number)
-                .message("DexTaxi. Tasdiqlash kodi: " + integer + ". Yo'linggiz bexatar  bo'lsin.")
+                .message("Tasdiqlash kodi: " + integer + ". Yo'linggiz bexatar  bo'lsin.")
                 .from(4546)
                 .callback_url("http://0000.uz/test.php")
                 .build());
